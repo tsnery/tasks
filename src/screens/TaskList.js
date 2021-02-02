@@ -5,7 +5,7 @@ import "moment/locale/pt-br";
 import Icon from "react-native-vector-icons/FontAwesome";
 
 import Task from "../components/Task";
-
+import CreateTask from './CreateTask'
 import {
   View,
   Text,
@@ -13,12 +13,14 @@ import {
   ImageBackground,
   StyleSheet,
   TouchableWithoutFeedback,
+  TouchableOpacity,
   Platform
 } from "react-native";
 
 export default class TaskList extends Component {
   state = {
     showDoneTasks: true,
+    showModal: false,
     visibleTasks: [],
     tasks: [
       {
@@ -70,14 +72,17 @@ export default class TaskList extends Component {
 
   render() {
     const today = moment().locale("pt-br").format("ddd, D [de] MMMM");
+
+    const {visibleTasks, showModal, showDoneTasks} = this.state
     return (
       <View style={styles.container}>
+        <CreateTask isVisible={showModal} onCancel={() => this.setState({showModal: false})}/>
         <ImageBackground source={todayImage} style={styles.background}>
           <View style={styles.iconBar}>
             <TouchableWithoutFeedback onPress={this.toggleFilter}>
               <Icon
                 style={styles.icon}
-                name={this.state.showDoneTasks ? "eye" : "eye-slash"}
+                name={showDoneTasks ? "eye" : "eye-slash"}
                 size={20}
                 color="#FFF"
               />
@@ -91,13 +96,18 @@ export default class TaskList extends Component {
         <View style={styles.taskList}>
 
           <FlatList
-            data={this.state.visibleTasks}
+            data={visibleTasks}
             keyExtractor={(item) => `${item.id}`}
             renderItem={({ item }) => (
               <Task {...item} onToggleTask={this.toggleTask} />
             )}
           />
 
+        </View>
+        <View style={styles.addButton}>
+            <TouchableOpacity onPress={() => this.setState({showModal:true})}>
+                <Icon name="plus" size={30} color="#FFF" />
+            </TouchableOpacity>
         </View>
       </View>
     );
@@ -137,5 +147,16 @@ const styles = StyleSheet.create({
   icon: {
       paddingVertical: Platform.OS === 'ios' ? 30 : 10,
       paddingHorizontal: 20,
+  },
+  addButton: {
+      position: 'absolute',
+      right: 20,
+      bottom: 20,
+      height: 50,
+      width: 50,
+      backgroundColor: 'red',
+      borderRadius: 25,
+      alignItems: 'center',
+      justifyContent: 'center'
   }
 });
