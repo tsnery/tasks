@@ -23,16 +23,21 @@ import {
   Platform
 } from "react-native";
 
+const initialState = {
+  showDoneTasks: true,
+  showModal: false,
+  visibleTasks: [],
+  tasks: [],
+}
+
 export default class TaskList extends Component {
   state = {
-    showDoneTasks: true,
-    showModal: false,
-    visibleTasks: [],
-    tasks: [],
+    ...initialState
   };
 
+  // carrega os dados salvos no async storage ao iniciar a aplicação
   componentDidMount = () => {
-      this.filterTasks()
+      this.getData()
   }
 
   // alterna uma task pendente para conclúida e vice-versa
@@ -43,7 +48,7 @@ export default class TaskList extends Component {
         task.doneAt = task.doneAt ? null : new Date();
       }
     });
-    this.setState({ tasks });
+    this.setState({ tasks }, this.filterTasks);
   };
 
   // alterna a visibilidade das tasks
@@ -61,7 +66,29 @@ export default class TaskList extends Component {
           visibleTasks = this.state.tasks.filter(pending)
       }
       this.setState({visibleTasks})
+      this.storeData(this.state)
   }
+
+  // guarda os dados no async storage
+  storeData = async(value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('taskState', jsonValue)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  // obtem os dados do async storage
+  getData = async() => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('taskState')
+      const state = jsonValue != null ? JSON.parse(jsonValue) : initialState
+      this.setState(state, this.filterTasks)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
 
   // adiciona nova task
   addTask = (newTask) => {
