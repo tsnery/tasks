@@ -1,11 +1,16 @@
 import React, { Component, state } from "react";
+
 import todayImage from "../../assets/imgs/today.jpg";
+
 import moment from "moment";
 import "moment/locale/pt-br";
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import Icon from "react-native-vector-icons/FontAwesome";
 
 import Task from "../components/Task";
 import CreateTask from './CreateTask'
+
 import {
   Alert,
   View,
@@ -23,20 +28,7 @@ export default class TaskList extends Component {
     showDoneTasks: true,
     showModal: false,
     visibleTasks: [],
-    tasks: [
-      {
-        id: Math.random(),
-        description: "Estudar NodeJS",
-        estimateAt: new Date(),
-        doneAt: null,
-      },
-      {
-        id: Math.random(),
-        description: "Estudar ReactJS",
-        estimateAt: new Date(),
-        doneAt: new Date(),
-      },
-    ],
+    tasks: [],
   };
 
   componentDidMount = () => {
@@ -87,6 +79,12 @@ export default class TaskList extends Component {
     this.setState({tasks, showModal: false}, this.filterTasks)
   }
 
+  // deleta uma task
+  deleteTask = (id) => {
+    const tasks = this.state.tasks.filter(task => task.id !== id)
+    this.setState({tasks}, this.filterTasks)
+  }
+
   render() {
     const today = moment().locale("pt-br").format("ddd, D [de] MMMM");
 
@@ -119,7 +117,7 @@ export default class TaskList extends Component {
             data={visibleTasks}
             keyExtractor={(item) => `${item.id}`}
             renderItem={({ item }) => (
-              <Task {...item} onToggleTask={this.toggleTask} />
+              <Task {...item} onToggleTask={this.toggleTask} onDelete={this.deleteTask}/>
             )}
           />
 
