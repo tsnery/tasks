@@ -2,13 +2,13 @@ import React from 'react'
 import Icon from 'react-native-vector-icons/FontAwesome'
 import moment from 'moment'
 import 'moment/locale/pt-br'
+import Swipeable from 'react-native-gesture-handler/Swipeable'
 import { 
     View, 
     Text, 
     StyleSheet, 
     TouchableWithoutFeedback, 
     TouchableOpacity, 
-    Platform 
 } from 'react-native'
 
 const Task = (props) => {
@@ -29,18 +29,28 @@ const Task = (props) => {
     const date = props.doneAt != null ? props.doneAt : props.estimateAt
     const formattedDate = moment(date).locale('pt-br').format('ddd, D [de] MMMM')
 
+    const getRightContent = () => {
+        return (
+            <TouchableOpacity style={styles.right}>
+                <Icon name="trash" size={30} color="#FFF"/>
+            </TouchableOpacity>
+        )
+    }
+
     return(
-        <View style={styles.container}>
-            <TouchableWithoutFeedback onPress={() => props.onToggleTask(props.id)}>
-                <View style={styles.checkContainer}>
-                    {checkTask(props.doneAt)}
+        <Swipeable renderRightActions={getRightContent}>
+            <View style={styles.container}>
+                <TouchableWithoutFeedback onPress={() => props.onToggleTask(props.id)}>
+                    <View style={styles.checkContainer}>
+                        {checkTask(props.doneAt)}
+                    </View>
+                </TouchableWithoutFeedback>
+                <View>
+                    <Text style={[styles.desc, doneOrNotStyle]}>{props.description}</Text>
+                    <Text style={[styles.date, doneOrNotStyle]}>{formattedDate}</Text>
                 </View>
-            </TouchableWithoutFeedback>
-            <View>
-                <Text style={[styles.desc, doneOrNotStyle]}>{props.description}</Text>
-                <Text style={[styles.date, doneOrNotStyle]}>{formattedDate}</Text>
             </View>
-        </View>
+        </Swipeable>
     )
 }
 const styles = StyleSheet.create({
@@ -80,6 +90,13 @@ const styles = StyleSheet.create({
     date: {
         fontSize: 12,
         color: '#555',
+    },
+    right: {
+        backgroundColor: 'red',
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingHorizontal: 20,
     }
 })
 
