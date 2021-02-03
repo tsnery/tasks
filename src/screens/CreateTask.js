@@ -1,5 +1,5 @@
 import React, {Component} from 'react'
-
+import DateTimePicker from '@react-native-community/datetimepicker'
 import {
     Modal,
     View,
@@ -7,15 +7,23 @@ import {
     StyleSheet,
     TouchableWithoutFeedback,
     TouchableOpacity,
-    TextInput
+    TextInput,
+    Platform
 } from 'react-native'
 
-const initialState = {description: '',}
+const initialState = {description: '', date: new Date(), showDate:false}
 
 export default class CreateTask extends Component {
+
     state = {
         ...initialState
     }
+
+    getDatePicker = (_, selectedDate) => {
+        const currentDate = selectedDate || date
+        this.setState({date:currentDate})
+    }
+
     render () {
         return (
             <Modal 
@@ -35,6 +43,14 @@ export default class CreateTask extends Component {
                         placeholder="nova tarefa..." 
                         value={this.state.description}
                         onChangeText={(text)=> this.setState({description: text})}
+                    />
+                    <DateTimePicker
+                        testID='dateTimePicker'
+                        value={this.state.date}
+                        mode='date'
+                        display='spinner'
+                        locale='pt-br'
+                        onChange={this.getDatePicker}
                     />
                     <View style={styles.buttons}>
                         <TouchableOpacity>
