@@ -105,7 +105,7 @@ export default class TaskList extends Component {
 
         </View>
         <View style={styles.addButton}>
-            <TouchableOpacity onPress={() => this.setState({showModal:true})}>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => this.setState({showModal:true})}>
                 <Icon name="plus" size={30} color="#FFF" />
             </TouchableOpacity>
         </View>
@@ -154,7 +154,7 @@ const styles = StyleSheet.create({
       bottom: 20,
       height: 50,
       width: 50,
-      backgroundColor: 'red',
+      backgroundColor: '#B13B44',
       borderRadius: 25,
       alignItems: 'center',
       justifyContent: 'center'
