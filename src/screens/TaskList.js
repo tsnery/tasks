@@ -7,6 +7,7 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import Task from "../components/Task";
 import CreateTask from './CreateTask'
 import {
+  Alert,
   View,
   Text,
   FlatList,
@@ -58,7 +59,7 @@ export default class TaskList extends Component {
     this.setState({ showDoneTasks: !this.state.showDoneTasks }, this.filterTasks);
   };
 
-  // filtra as tarefas para mostrar apenas as pendentes
+  // filtra as tarefas de acordo com a visibilidade
   filterTasks = () => {
       let visibleTasks = null
       if(this.state.showDoneTasks){
@@ -70,13 +71,32 @@ export default class TaskList extends Component {
       this.setState({visibleTasks})
   }
 
+  // adiciona nova task
+  addTask = (newTask) => {
+    if(!newTask.description || !newTask.description.trim()){
+      Alert.alert('Dados inválidos!', 'Descrição não informada!')
+      return
+    }
+    const tasks = [...this.state.tasks]
+    tasks.push({
+      id:Math.random(),
+      description: newTask.description,
+      estimateAt: newTask.date,
+      doneAt: null
+    })
+    this.setState({tasks, showModal: false}, this.filterTasks)
+  }
+
   render() {
     const today = moment().locale("pt-br").format("ddd, D [de] MMMM");
 
     const {visibleTasks, showModal, showDoneTasks} = this.state
     return (
       <View style={styles.container}>
-        <CreateTask isVisible={showModal} onCancel={() => this.setState({showModal: false})}/>
+        <CreateTask isVisible={showModal} 
+          onCancel={() => this.setState({showModal: false})}
+          onSave={this.addTask}
+        />
         <ImageBackground source={todayImage} style={styles.background}>
           <View style={styles.iconBar}>
             <TouchableWithoutFeedback onPress={this.toggleFilter}>

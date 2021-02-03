@@ -19,9 +19,19 @@ export default class CreateTask extends Component {
         ...initialState
     }
 
+    // obtem a data selecionada pelo usuário
     getDatePicker = (_, selectedDate) => {
         const currentDate = selectedDate || date
         this.setState({date:currentDate})
+    }
+
+    saveTask = () => {
+        const newTask = {
+            description: this.state.description,
+            date: this.state.date
+        }
+        this.props.onSave && this.props.onSave(newTask)
+        this.setState({...initialState})
     }
 
     render () {
@@ -57,7 +67,7 @@ export default class CreateTask extends Component {
                             <Text style={styles.button} onPress={this.props.onCancel}>Cancelar</Text>
                         </TouchableOpacity>
                         <TouchableOpacity>
-                            <Text style={styles.button}>Salvar</Text>
+                            <Text style={styles.button} onPress={this.saveTask}>Salvar</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
