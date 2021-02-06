@@ -8,8 +8,14 @@
     "eject": "expo eject"
   },
   "dependencies": {
+<<<<<<< HEAD
     "@react-native-community/datetimepicker": "3.0.4",
     "expo": "~40.0.0",
+=======
+    "@react-native-async-storage/async-storage": "^1.13.4",
+    "@react-native-community/datetimepicker": "3.0.4",
+    "expo": "^40.0.0",
+>>>>>>> 59a996f09e54197cbd68e1c0c7dd9db6e1183a17
     "expo-status-bar": "~1.0.3",
     "moment": "^2.29.1",
     "react": "16.13.1",
@@ -17,11 +23,16 @@
     "react-native": "https://github.com/expo/react-native/archive/sdk-40.0.1.tar.gz",
     "react-native-gesture-handler": "~1.8.0",
     "react-native-vector-icons": "^8.0.0",
+<<<<<<< HEAD
     "react-native-web": "~0.13.12",
     "react-navigation": "^4.4.3"
+=======
+    "react-native-web": "~0.13.12"
+>>>>>>> 59a996f09e54197cbd68e1c0c7dd9db6e1183a17
   },
   "devDependencies": {
     "@babel/core": "~7.9.0"
   },
-  "private": true
+  "private": true,
+  "name": "Tasks"
 }

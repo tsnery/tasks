@@ -1,12 +1,18 @@
 import React, { Component, state } from "react";
+
 import todayImage from "../../assets/imgs/today.jpg";
+
 import moment from "moment";
 import "moment/locale/pt-br";
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import Icon from "react-native-vector-icons/FontAwesome";
 
 import Task from "../components/Task";
 import CreateTask from './CreateTask'
+
 import {
+  Alert,
   View,
   Text,
   FlatList,
@@ -17,29 +23,21 @@ import {
   Platform
 } from "react-native";
 
+const initialState = {
+  showDoneTasks: true,
+  showModal: false,
+  visibleTasks: [],
+  tasks: [],
+}
+
 export default class TaskList extends Component {
   state = {
-    showDoneTasks: true,
-    showModal: false,
-    visibleTasks: [],
-    tasks: [
-      {
-        id: Math.random(),
-        description: "Estudar NodeJS",
-        estimateAt: new Date(),
-        doneAt: null,
-      },
-      {
-        id: Math.random(),
-        description: "Estudar ReactJS",
-        estimateAt: new Date(),
-        doneAt: new Date(),
-      },
-    ],
+    ...initialState
   };
 
+  // carrega os dados salvos no async storage ao iniciar a aplicação
   componentDidMount = () => {
-      this.filterTasks()
+      this.getData()
   }
 
   // alterna uma task pendente para conclúida e vice-versa
@@ -50,7 +48,7 @@ export default class TaskList extends Component {
         task.doneAt = task.doneAt ? null : new Date();
       }
     });
-    this.setState({ tasks });
+    this.setState({ tasks }, this.filterTasks);
   };
 
   // alterna a visibilidade das tasks
@@ -58,7 +56,7 @@ export default class TaskList extends Component {
     this.setState({ showDoneTasks: !this.state.showDoneTasks }, this.filterTasks);
   };
 
-  // filtra as tarefas para mostrar apenas as pendentes
+  // filtra as tarefas de acordo com a visibilidade
   filterTasks = () => {
       let visibleTasks = null
       if(this.state.showDoneTasks){
@@ -68,6 +66,50 @@ export default class TaskList extends Component {
           visibleTasks = this.state.tasks.filter(pending)
       }
       this.setState({visibleTasks})
+      this.storeData(this.state)
+  }
+
+  // guarda os dados no async storage
+  storeData = async(value) => {
+    try {
+      const jsonValue = JSON.stringify(value)
+      await AsyncStorage.setItem('taskState', jsonValue)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+  // obtem os dados do async storage
+  getData = async() => {
+    try {
+      const jsonValue = await AsyncStorage.getItem('taskState')
+      const state = jsonValue != null ? JSON.parse(jsonValue) : initialState
+      this.setState(state, this.filterTasks)
+    } catch (e) {
+      console.log(e)
+    }
+  }
+
+
+  // adiciona nova task
+  addTask = (newTask) => {
+    if(!newTask.description || !newTask.description.trim()){
+      Alert.alert('Dados inválidos!', 'Descrição não informada!')
+      return
+    }
+    const tasks = [...this.state.tasks]
+    tasks.push({
+      id:Math.random(),
+      description: newTask.description,
+      estimateAt: newTask.date,
+      doneAt: null
+    })
+    this.setState({tasks, showModal: false}, this.filterTasks)
+  }
+
+  // deleta uma task
+  deleteTask = (id) => {
+    const tasks = this.state.tasks.filter(task => task.id !== id)
+    this.setState({tasks}, this.filterTasks)
   }
 
   render() {
@@ -76,7 +118,10 @@ export default class TaskList extends Component {
     const {visibleTasks, showModal, showDoneTasks} = this.state
     return (
       <View style={styles.container}>
-        <CreateTask isVisible={showModal} onCancel={() => this.setState({showModal: false})}/>
+        <CreateTask isVisible={showModal} 
+          onCancel={() => this.setState({showModal: false})}
+          onSave={this.addTask}
+        />
         <ImageBackground source={todayImage} style={styles.background}>
           <View style={styles.iconBar}>
             <TouchableWithoutFeedback onPress={this.toggleFilter}>
@@ -99,13 +144,13 @@ export default class TaskList extends Component {
             data={visibleTasks}
             keyExtractor={(item) => `${item.id}`}
             renderItem={({ item }) => (
-              <Task {...item} onToggleTask={this.toggleTask} />
+              <Task {...item} onToggleTask={this.toggleTask} onDelete={this.deleteTask}/>
             )}
           />
 
         </View>
         <View style={styles.addButton}>
-            <TouchableOpacity onPress={() => this.setState({showModal:true})}>
+            <TouchableOpacity activeOpacity={0.7} onPress={() => this.setState({showModal:true})}>
                 <Icon name="plus" size={30} color="#FFF" />
             </TouchableOpacity>
         </View>
@@ -154,7 +199,7 @@ const styles = StyleSheet.create({
       bottom: 20,
       height: 50,
       width: 50,
-      backgroundColor: 'red',
+      backgroundColor: '#B13B44',
       borderRadius: 25,
       alignItems: 'center',
       justifyContent: 'center'
