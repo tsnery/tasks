@@ -100,6 +100,7 @@ const styles = StyleSheet.create({
         marginTop: 10,
         backgroundColor: '#FFF',
         padding: 10,
+        fontSize: 16
     },
     buttonContainer: {
         backgroundColor: '#080',
