@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import Auth from './src/screens/Auth';
+import Navigator from './src/Navigator';
 
 export default function App() {
   return (
-    <Auth/>
+      <Navigator/>
   );
 }

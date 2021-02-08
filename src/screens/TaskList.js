@@ -1,4 +1,4 @@
-import React, { Component, state } from "react";
+import React, { Component } from "react";
 
 import todayImage from "../../assets/imgs/today.jpg";
 

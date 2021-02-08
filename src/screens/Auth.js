@@ -52,7 +52,7 @@ export default class Auth extends Component {
 
             this.props.navigation.navigate('Home')
         } catch(e) {
-
+            showError(e)
         }
     }
     render () {
