@@ -1,21 +1,55 @@
-import {createAppContainer, createSwitchNavigator} from 'react-navigation'
+import React from 'react'
+import { createAppContainer, createSwitchNavigator } from "react-navigation";
+import { createDrawerNavigator } from "react-navigation-drawer";
+import Auth from "./screens/Auth";
+import TaskList from "./screens/TaskList";
 
-import Auth from './screens/Auth'
-import TaskList from './screens/TaskList'
-
-const mainRoutes = {
-    Auth: {
-        name: 'Auth',
-        screen: Auth
+const menuRoutes = {
+    Today: {
+        name: 'Today',
+        screen: props => <TaskList {...props} title='Hoje' daysAhead={0}/>,
+        navigationOptions: {
+            title: 'Hoje'
+        }
     },
-    Home: {
-        name: 'Home',
-        screen: TaskList
-    }
+    Tomorrow: {
+        name: 'Tomorrow',
+        screen: props => <TaskList {...props} title='Amanhã' daysAhead={1}/>,
+        navigationOptions: {
+            title: 'Amanhã'
+        }
+    },
+    Week: {
+        name: 'Week',
+        screen: props => <TaskList {...props} title='Semana' daysAhead={7}/>,
+        navigationOptions: {
+            title: 'Semana'
+        }
+    },
+    Month: {
+        name: 'Month',
+        screen: props => <TaskList {...props} title='Mês' daysAhead={30}/>,
+        navigationOptions: {
+            title: 'Mês'
+        }
+    },
 }
 
-const mainNavigator = createSwitchNavigator(mainRoutes, {
-  initialRouteName: 'Auth'
-})
+const menuNavigator = createDrawerNavigator(menuRoutes)
 
-export default createAppContainer(mainNavigator)
+const mainRoutes = {
+  Auth: {
+    name: "Auth",
+    screen: Auth,
+  },
+  Home: {
+    name: "Home",
+    screen: menuNavigator,
+  },
+};
+
+const mainNavigator = createSwitchNavigator(mainRoutes, {
+  initialRouteName: "Auth",
+});
+
+export default createAppContainer(mainNavigator);

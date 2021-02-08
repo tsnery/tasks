@@ -45,7 +45,7 @@ export default class TaskList extends Component {
   loadTasks = async() => {
     try {
       const maxDate = moment().format('YYYY-MM-DD 23:59:59')
-      const response = await axios.get(`${server}/tasks`)
+      const response = await axios.get(`${server}/tasks?date=${maxDate}`)
       this.setState({ tasks: response.data }, this.filterTasks)
     } catch(e) {
       showError(e)
@@ -53,14 +53,13 @@ export default class TaskList extends Component {
   }
 
   // alterna uma task pendente para conclúida e vice-versa
-  toggleTask = (taskId) => {
-    const tasks = [...this.state.tasks];
-    tasks.forEach((task) => {
-      if (task.id === taskId) {
-        task.doneAt = task.doneAt ? null : new Date();
-      }
-    });
-    this.setState({ tasks }, this.filterTasks);
+  toggleTask = async(taskId) => {
+    try {
+      await axios.put(`${server}/tasks/${taskId}/toggle`)
+      await this.loadTasks()
+    } catch(e) {
+      showError(e)
+    }
   };
 
   // alterna a visibilidade das tasks
@@ -105,25 +104,32 @@ export default class TaskList extends Component {
 
 
   // adiciona nova task
-  addTask = (newTask) => {
+  addTask = async(newTask) => {
     if(!newTask.description || !newTask.description.trim()){
       Alert.alert('Dados inválidos!', 'Descrição não informada!')
       return
     }
-    const tasks = [...this.state.tasks]
-    tasks.push({
-      id:Math.random(),
-      description: newTask.description,
-      estimateAt: newTask.date,
-      doneAt: null
-    })
-    this.setState({tasks, showModal: false}, this.filterTasks)
+
+    try {
+      await axios.post(`${server}/tasks`, {
+        description: newTask.description,
+        estimateAt: newTask.date
+      })
+      this.setState({showModal: false}, this.loadTasks)
+    } catch(e) {
+      showError(e)
+    }
+
   }
 
   // deleta uma task
-  deleteTask = (id) => {
-    const tasks = this.state.tasks.filter(task => task.id !== id)
-    this.setState({tasks}, this.filterTasks)
+  deleteTask = async(id) => {
+    try {
+      await axios.delete(`${server}/tasks/${id}`)
+      await this.loadTasks()
+    } catch(e) {
+      showError(e)
+    }
   }
 
   render() {
