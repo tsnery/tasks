@@ -10,13 +10,14 @@ import {
 import backgroundImage from "../../assets/imgs/login.jpg";
 
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { server, showError, showSuccess } from "../common";
 
 const initialState = {
   name: "",
-  email: "tainan@email.com",
-  password: "abc123",
+  email: "",
+  password: "",
   confirmPassword: "",
   stageNew: false,
 };
@@ -25,6 +26,7 @@ export default class Auth extends Component {
   state = {
     ...initialState,
   };
+  
   signinOrSignup = () => {
     if (this.state.stageNew) {
       this.signup();
@@ -54,15 +56,20 @@ export default class Auth extends Component {
         password: this.state.password,
       });
 
+      // adiciona o token no header de authorization
+      // após adicionar o token, guarda para recuperar a partir de cada request
+      await AsyncStorage.setItem("userData", JSON.stringify(response.data))
       axios.defaults.headers.common[
         "Authorization"
       ] = `bearer ${response.data.token}`;
 
+      // segue para a tela de tarefas
       this.props.navigation.navigate("Home", response.data);
     } catch (e) {
       showError(e);
     }
   };
+
   render() {
     const validations = [];
     validations.push(this.state.email && this.state.email.includes("@"));
