@@ -3,6 +3,23 @@ import { createAppContainer, createSwitchNavigator } from "react-navigation";
 import { createDrawerNavigator } from "react-navigation-drawer";
 import Auth from "./screens/Auth";
 import TaskList from "./screens/TaskList";
+import Menu from './screens/Menu';
+import Loading from './screens/Loading';
+
+const menuConfig = { 
+    initialRouteName: 'Today',
+    contentComponent: Menu,
+    contentOptions: {
+        labelStyle: {
+            fontWeight: 'normal',
+            fontSize: 20,
+        },
+        activeLabelStyle: {
+            fontWeight: 'bold',
+            color: '#080',
+        }
+    }
+}
 
 const menuRoutes = {
     Today: {
@@ -35,9 +52,13 @@ const menuRoutes = {
     },
 }
 
-const menuNavigator = createDrawerNavigator(menuRoutes)
+const menuNavigator = createDrawerNavigator(menuRoutes, menuConfig)
 
 const mainRoutes = {
+  Loading: {
+    name: 'Loading',
+    screen: Loading,
+  },
   Auth: {
     name: "Auth",
     screen: Auth,
@@ -49,7 +70,7 @@ const mainRoutes = {
 };
 
 const mainNavigator = createSwitchNavigator(mainRoutes, {
-  initialRouteName: "Auth",
+  initialRouteName: "Loading"
 });
 
 export default createAppContainer(mainNavigator);
