@@ -56,6 +56,16 @@ export default class Auth extends Component {
         }
     }
     render () {
+        const validations = []
+        validations.push(this.state.email && this.state.email.includes('@'))
+        validations.push(this.state.password && this.state.password.length >= 6)
+
+        if(this.state.stageNew) {
+            validations.push(this.state.name && this.state.name.trim().length >= 2)
+            validations.push(this.state.password === this.state.confirmPassword)
+        }
+
+        const validForm = validations.reduce((total, atual) => total && atual)
         return (
             <ImageBackground source={backgroundImage} style={styles.background}>
                 <Text style={styles.title}>Tasks</Text>
@@ -73,7 +83,7 @@ export default class Auth extends Component {
                         value={this.state.email}
                         onChangeText={email => this.setState({email})}
                     />
-                    <TextInput style={styles.input} placeholder="Senha"
+                    <TextInput style={styles.input} placeholder="Senha (mínimo 6 caracteres)"
                         value={this.state.password}
                         onChangeText={password => this.setState({password})}
                         secureTextEntry
@@ -85,8 +95,10 @@ export default class Auth extends Component {
                             secureTextEntry
                         />
                     }
-                    <TouchableOpacity activeOpacity={0.7} onPress={this.signinOrSignup}>
-                        <View style={styles.buttonContainer}>
+                    <TouchableOpacity activeOpacity={0.7} onPress={this.signinOrSignup}
+                        disabled={!validForm}
+                    >
+                        <View style={[styles.buttonContainer, validForm ? {} : {backgroundColor: '#AAA'}]}>
                             <Text style={styles.button}>
                                 {this.state.stageNew ? 'Registrar':'Entrar'}
                             </Text>
