@@ -1,9 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import TaskList from './src/screens/TaskList'
+import Auth from './src/screens/Auth';
 
 export default function App() {
   return (
-      <TaskList/>
+    <Auth/>
   );
 }
