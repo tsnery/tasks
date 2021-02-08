@@ -4,13 +4,14 @@ import todayImage from "../../assets/imgs/today.jpg";
 
 import moment from "moment";
 import "moment/locale/pt-br";
+import axios from 'axios'
 
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import Icon from "react-native-vector-icons/FontAwesome";
 
 import Task from "../components/Task";
 import CreateTask from './CreateTask'
-
+import {server, showError} from '../common'
 import {
   Alert,
   View,
@@ -37,7 +38,18 @@ export default class TaskList extends Component {
 
   // carrega os dados salvos no async storage ao iniciar a aplicação
   componentDidMount = () => {
-      this.getData()
+      this.getData() // carrega os dados do async storage
+      this.loadTasks() // carrega os dados do banco de dados
+  }
+
+  loadTasks = async() => {
+    try {
+      const maxDate = moment().format('YYYY-MM-DD 23:59:59')
+      const response = await axios.get(`${server}/tasks`)
+      this.setState({ tasks: response.data }, this.filterTasks)
+    } catch(e) {
+      showError(e)
+    }
   }
 
   // alterna uma task pendente para conclúida e vice-versa
@@ -66,7 +78,9 @@ export default class TaskList extends Component {
           visibleTasks = this.state.tasks.filter(pending)
       }
       this.setState({visibleTasks})
-      this.storeData(this.state)
+      this.storeData({
+        showDoneTasks: this.state.showDoneTasks
+      })
   }
 
   // guarda os dados no async storage
@@ -82,8 +96,8 @@ export default class TaskList extends Component {
   getData = async() => {
     try {
       const jsonValue = await AsyncStorage.getItem('taskState')
-      const state = jsonValue != null ? JSON.parse(jsonValue) : initialState
-      this.setState(state, this.filterTasks)
+      const savedState = jsonValue != null ? JSON.parse(jsonValue) : initialState
+      this.setState({showDoneTasks: savedState.showDoneTasks}, this.filterTasks)
     } catch (e) {
       console.log(e)
     }

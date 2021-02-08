@@ -9,8 +9,8 @@ import {server, showError, showSuccess} from '../common'
 
 const initialState = {
     name: '',
-    email:'',
-    password:'',
+    email:'tainan@email.com',
+    password:'abc123',
     confirmPassword: '',
     stageNew: false,
 }
