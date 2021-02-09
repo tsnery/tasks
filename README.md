@@ -18,5 +18,5 @@ Backend:
   Express (NodeJS)
   Postgresql
   Knex (SQL query builder)
-  Passpost (Autenticação)
+  Passport (Autenticação)
   JWT (Autenticação)
