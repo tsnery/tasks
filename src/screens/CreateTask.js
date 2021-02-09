@@ -1,12 +1,13 @@
 import React, { Component } from "react";
 import {
-    Modal,
-    View,
-    Text,
-    StyleSheet,
-    TouchableWithoutFeedback,
-    TouchableOpacity,
-    TextInput } from "react-native";
+  Modal,
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
+  TextInput,
+} from "react-native";
 
 import DateTimePicker from "@react-native-community/datetimepicker";
 

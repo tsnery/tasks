@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 
-import commonStyles from "../commonStyles"
-
+import commonStyles from "../commonStyles";
 import todayImage from "../../assets/imgs/today.jpg";
 import tomorrowImage from "../../assets/imgs/tomorrow.jpg";
 import weekImage from "../../assets/imgs/week.jpg";
@@ -17,7 +16,9 @@ import Icon from "react-native-vector-icons/FontAwesome";
 import Task from "../components/Task";
 import CreateTask from "./CreateTask";
 import { server, showError } from "../common";
+
 import {
+  RefreshControl,
   Alert,
   View,
   Text,
@@ -26,18 +27,20 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
   TouchableOpacity,
-  Platform} from "react-native";
+  Platform,
+} from "react-native";
 
 const initialState = {
   showDoneTasks: true,
   showModal: false,
   visibleTasks: [],
   tasks: [],
-}
+};
 
 export default class TaskList extends Component {
   state = {
     ...initialState,
+    isLoading: false,
   };
 
   // carrega os dados salvos no async storage ao iniciar a aplicação
@@ -145,25 +148,38 @@ export default class TaskList extends Component {
   };
 
   getImage = () => {
-    switch(this.props.daysAhead) {
-      case 0: return todayImage
-      case 1: return tomorrowImage
-      case 7: return weekImage
-      default: return monthImage
+    switch (this.props.daysAhead) {
+      case 0:
+        return todayImage;
+      case 1:
+        return tomorrowImage;
+      case 7:
+        return weekImage;
+      default:
+        return monthImage;
     }
-  }
+  };
   getColor = () => {
-    switch(this.props.daysAhead) {
-      case 0: return commonStyles.colors.today
-      case 1: return commonStyles.colors.tomorrow
-      case 7: return commonStyles.colors.week
-      default: return commonStyles.colors.month
+    switch (this.props.daysAhead) {
+      case 0:
+        return commonStyles.colors.today;
+      case 1:
+        return commonStyles.colors.tomorrow;
+      case 7:
+        return commonStyles.colors.week;
+      default:
+        return commonStyles.colors.month;
     }
-  }
+  };
+
+  // Ao arrastar para baixo, atualiza as tasks
+  handleRefresh = () => {
+    this.setState({ isLoading: true }, this.loadTasks);
+    this.setState({ isLoading: false });
+  };
 
   render() {
     const today = moment().locale("pt-br").format("ddd, D [de] MMMM");
-
     const { visibleTasks, showModal, showDoneTasks } = this.state;
     return (
       <View style={styles.container}>
@@ -174,13 +190,10 @@ export default class TaskList extends Component {
         />
         <ImageBackground source={this.getImage()} style={styles.background}>
           <View style={styles.iconBar}>
-            <TouchableWithoutFeedback onPress={() => this.props.navigation.openDrawer()}>
-              <Icon
-                style={styles.icon}
-                name="bars"
-                size={20}
-                color="#FFF"
-            />
+            <TouchableWithoutFeedback
+              onPress={() => this.props.navigation.openDrawer()}
+            >
+              <Icon style={styles.icon} name="bars" size={20} color="#FFF" />
             </TouchableWithoutFeedback>
             <TouchableWithoutFeedback onPress={this.toggleFilter}>
               <Icon
@@ -207,9 +220,11 @@ export default class TaskList extends Component {
                 onDelete={this.deleteTask}
               />
             )}
+            onRefresh={this.handleRefresh}
+            refreshing={this.state.isLoading}
           />
         </View>
-        <View style={[styles.addButton, {backgroundColor: this.getColor()}]}>
+        <View style={[styles.addButton, { backgroundColor: this.getColor() }]}>
           <TouchableOpacity
             activeOpacity={0.7}
             onPress={() => this.setState({ showModal: true })}
@@ -230,6 +245,7 @@ const styles = StyleSheet.create({
     flex: 3,
   },
   taskList: {
+    backgroundColor: "#FFF",
     flex: 7,
   },
   titleBar: {

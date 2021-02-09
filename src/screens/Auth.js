@@ -5,7 +5,8 @@ import {
   StyleSheet,
   View,
   TextInput,
-  TouchableOpacity } from "react-native";
+  TouchableOpacity,
+} from "react-native";
 
 import backgroundImage from "../../assets/imgs/login.jpg";
 
@@ -26,7 +27,7 @@ export default class Auth extends Component {
   state = {
     ...initialState,
   };
-  
+
   signinOrSignup = () => {
     if (this.state.stageNew) {
       this.signup();
@@ -58,7 +59,7 @@ export default class Auth extends Component {
 
       // adiciona o token no header de authorization
       // após adicionar o token, guarda para recuperar a partir de cada request
-      await AsyncStorage.setItem("userData", JSON.stringify(response.data))
+      await AsyncStorage.setItem("userData", JSON.stringify(response.data));
       axios.defaults.headers.common[
         "Authorization"
       ] = `bearer ${response.data.token}`;
@@ -180,7 +181,7 @@ const styles = StyleSheet.create({
   input: {
     marginTop: 10,
     backgroundColor: "#FFF",
-    padding: 10,
+    padding: 12,
   },
   buttonContainer: {
     backgroundColor: "#080",
@@ -190,6 +191,6 @@ const styles = StyleSheet.create({
   },
   button: {
     color: "#FFF",
-    fontSize: 16,
+    fontSize: 18,
   },
 });

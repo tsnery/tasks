@@ -1,11 +1,11 @@
 import React from "react";
 import Swipeable from "react-native-gesture-handler/Swipeable";
 import {
-    View,
-    Text,
-    StyleSheet,
-    TouchableWithoutFeedback,
-    TouchableOpacity,
+  View,
+  Text,
+  StyleSheet,
+  TouchableWithoutFeedback,
+  TouchableOpacity,
 } from "react-native";
 
 import moment from "moment";
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   desc: {
-    fontSize: 15,
+    fontSize: 18,
     color: "#222",
   },
   date: {
