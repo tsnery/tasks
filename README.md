@@ -13,4 +13,10 @@ O usuário poderá:
   6. atualizar lista de tarefas para obter os dados mais recentes;
   7. selecionar tarefas filtrando por dia posteriores;
   8. deslogar-se;
- 
+
+Backend: 
+  Express (NodeJS)
+  Postgresql
+  Knex (SQL query builder)
+  Passpost (Autenticação)
+  JWT (Autenticação)
